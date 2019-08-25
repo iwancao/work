@@ -59,7 +59,7 @@ def gen_playlist(root_dir, today, yesterday):
             id+= 1
 
     playlist.close()
-    # os.system("\"C:/iwan/Tools/PotPlayer 1.7.327/PotPlayerMini.exe\" {}{}-news.dpl".format(root_dir, today))
+    os.system("\"C:/iwan/Tools/PotPlayer 1.7.327/PotPlayerMini.exe\" {}{}-news.dpl".format(root_dir, today))
 
 channels = {
     "洛杉矶华人资讯网How视频": 'UC-ayKOXvIcatt5VocwTrU9Q',
