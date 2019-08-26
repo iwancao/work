@@ -6,6 +6,7 @@ import json
 import requests
 
 import sys, os
+import delegator # 子进程库
 
 import re
 import youtube_dl
@@ -59,7 +60,8 @@ def gen_playlist(root_dir, today, yesterday):
             id+= 1
 
     playlist.close()
-    os.system("\"C:/iwan/Tools/PotPlayer 1.7.327/PotPlayerMini.exe\" {}{}-news.dpl".format(root_dir, today))
+    # os.system("\"C:/iwan/Tools/PotPlayer 1.7.327/PotPlayerMini.exe\" {}{}-news.dpl".format(root_dir, today))
+    delegator.run("\"C:/iwan/Tools/PotPlayer 1.7.327/PotPlayerMini.exe\" {}{}-news.dpl".format(root_dir, today), block= False) # 没有阻塞，直接退出
 
 channels = {
     "洛杉矶华人资讯网How视频": 'UC-ayKOXvIcatt5VocwTrU9Q',
@@ -69,6 +71,8 @@ channels = {
     "中国人": 'UCMXOcEbl9nXgJRrQZBn6C0w',
     "Guan Video观视频工作室": 'UCYfJG6cGfW84FVLuy7semEg',
     "战忽局小助理": 'UCENGuKqPb7WojKuishb1OkQ',
+	"洞察天下": 'UCMrOWtXrYPXtpTv9TQW8CiQ',
+	"HKEECCO": 'UC3QkmBofoooHkJzWkyEHbyA',
     "無色覺醒": 'UCuCELS5-48uP1plTxlOJZQQ'
     }
 
@@ -87,7 +91,7 @@ class YBChannel:
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
 
         while True:
-            print("[Main]", url)
+            # print("[Main]", url)
             req = urllib.request.Request(url= url, headers= headers)
             page = urllib.request.urlopen(req).read()
             result = json.loads(page, encoding="utf-8")
@@ -123,6 +127,8 @@ class YBChannel:
 
             ydl_opts = {
                 'format': 'bestaudio/best',
+                'quiet': True,
+                'ignore-errors': True,
             	'outtmpl': file_name,
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -148,6 +154,11 @@ class YBChannel:
 if __name__ == "__main__":
     if len(sys.argv)> 1:
         dump_path= sys.argv[1]
+        if dump_path[-1]!= '/':
+            dump_path+= '/'
+        if os.path.exists(dum_path)== False:
+            print("The {} does not exists, will create...".format(dum_path))
+            os.makedirs(dum_path)
     else:
         dump_path= "C:/Download/News/"
 
