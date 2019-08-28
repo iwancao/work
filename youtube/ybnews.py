@@ -8,39 +8,19 @@ import requests
 import sys, os
 import delegator # 子进程库
 
+import colorama
+
 import re
 import youtube_dl
 import pickle
 import _locale
 _locale._getdefaultlocale = (lambda *args: ['en_US', 'utf-8'])
 
-def esc(code=0):
-    return f'\033[{code}m'
-
 '''
-说明：
-前景色            背景色           颜色
----------------------------------------
-30                40              黑色
-31                41              红色
-32                42              绿色
-33                43              黃色
-34                44              蓝色
-35                45              紫红色
-36                46              青蓝色
-37                47              白色
+Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+Style: DIM, NORMAL, BRIGHT, RESET_ALL
 
-显示方式           意义
--------------------------
-0                终端默认设置
-1                高亮显示
-4                使用下划线
-5                闪烁
-7                反白显示
-8                不可见
-
-例子：
-\033[1;31;40m    <!--1-高亮显示 31-前景色红色  40-背景色黑色-->
 '''
 def gen_playlist(root_dir, today, yesterday):
     dirs = os.listdir(root_dir)
@@ -123,7 +103,7 @@ class YBChannel:
 
             file_name= self.dump_path+ re.sub(r"[\%\!\.\/\\\:\*\?\"\<\>\|]", "_", '[{}]{}'.format(when, title))+ '.mp3'
             # 把所有奇怪的字符，% ! . / \ : * ? " < > | 都替换成 _
-            print('Dumping '+ file_name)
+            print('Dumping '+ colorama.Fore.GREEN+ colorama.Style.BRIGHT+ file_name + colorama.Style.RESET_ALL)
 
             ydl_opts = {
                 'format': 'bestaudio/best',
@@ -146,12 +126,14 @@ class YBChannel:
         ch_ids= list(self.channels.values())
 
         for i in range(len(ch_names)):
-            print("Starting searching channel :", ch_names[i])
+            print("Starting searching channel :", colorama.Fore.YELLOW+ colorama.Style.BRIGHT+ ch_names[i]+ colorama.Style.RESET_ALL)
             self.search_channel(ch_ids[i], t1, t2)
 
         return self.count
 
 if __name__ == "__main__":
+    colorama.init()
+
     if len(sys.argv)> 1:
         dump_path= sys.argv[1]
         if dump_path[-1]!= '/':
