@@ -1,125 +1,203 @@
-ע���˻��Լ������ֿ�
-Ҫ��ʹ��github��һ����Ȼ��ע��github�˺��ˣ� github������ַ��https://github.com/�� ֮��Ϳ��Դ����ֿ��ˣ�����û�ֻ�ܽ������ֿ⣩��Create a New Repository��������ƺ�Create��֮������һЩ�ֿ��������Ϣ����Ҳ��һ��git�ļ򵥽̡̳�
+注册账户以及创建仓库
+要想使用github第一步当然是注册github账号了， github官网地址：https://github.com/。 之后就可以创建仓库了（免费用户只能建公共仓库），Create a New Repository，填好名称后Create，之后会出现一些仓库的配置信息，这也是一个git的简单教程。
 
-����Git
-�����ڱ��ش���ssh key��
+配置Git
+首先在本地创建ssh key；
 
 $ ssh-keygen -t rsa -C "your_email@youremail.com"
-�����your_email@youremail.com��Ϊ����github��ע������䣬֮���Ҫ��ȷ��·�����������룬������ʹ��Ĭ�ϵ�һ·�س����С��ɹ��Ļ�����~/������.ssh�ļ��У���ȥ����id_rsa.pub�����������key��
+后面的your_email@youremail.com改为你在github上注册的邮箱，之后会要求确认路径和输入密码，我们这使用默认的一路回车就行。成功的话会在~/下生成.ssh文件夹，进去，打开id_rsa.pub，复制里面的key。
 
-�ص�github�ϣ����� Account Settings���˻����ã������ѡ��SSH Keys��Add SSH Key,title����ճ��������������ɵ�key��
-Ϊ����֤�Ƿ�ɹ�����git bash�����룺
+回到github上，进入 Account Settings（账户配置），左边选择SSH Keys，Add SSH Key,title随便填，粘贴在你电脑上生成的key。
+为了验证是否成功，在git bash下输入：
 
 $ ssh -T git@github.com
-����ǵ�һ�εĻ���ʾ�Ƿ�continue������yes�ͻῴ����You've successfully authenticated, but GitHub does not provide shell access ����ͱ�ʾ�ѳɹ�����github��
+如果是第一次的会提示是否continue，输入yes就会看到：You've successfully authenticated, but GitHub does not provide shell access 。这就表示已成功连上github。
 
-����������Ҫ���ľ��ǰѱ��زֿ⴫��github��ȥ���ڴ�֮ǰ����Ҫ����username��email����Ϊgithubÿ��commit�����¼���ǡ�
+接下来我们要做的就是把本地仓库传到github上去，在此之前还需要设置username和email，因为github每次commit都会记录他们。
 
 $ git config --global user.name "your name"
 $ git config --global user.email "your_email@youremail.com"
-����Ҫ�ϴ��Ĳֿ⣬�Ҽ�git bash������Զ�̵�ַ��
+进入要上传的仓库，右键git bash，添加远程地址：
 
 $ git remote add origin git@github.com:yourName/yourRepo.git
-�����yourName��yourRepo��ʾ����github���û����͸ղ��½��Ĳֿ⣬����֮�����.git����config���������һ��remote "origin"���ݣ�����Ǹղ����ӵ�Զ�̵�ַ��Ҳ����ֱ���޸�config������Զ�̵�ַ��
+后面的yourName和yourRepo表示你再github的用户名和刚才新建的仓库，加完之后进入.git，打开config，这里会多出一个remote "origin"内容，这就是刚才添加的远程地址，也可以直接修改config来配置远程地址。
 
-<h3�����²ֿ�
-�������ļ��У��򿪣�Ȼ��ִ�� git init �Դ����µ� git �ֿ⡣
+<h3创建新仓库
+创建新文件夹，打开，然后执行 git init 以创建新的 git 仓库。
 
 
-����ֿ�
-ִ�����������Դ���һ�����زֿ�Ŀ�¡�汾��
+检出仓库
+执行如下命令以创建一个本地仓库的克隆版本：
 
 git clone /path/to/repository 
-�����Զ�˷������ϵĲֿ⣬����������������ӣ�
+如果是远端服务器上的仓库，你的命令会是这个样子：
 
 git clone username@host:/path/to/repository
-</h3�����²ֿ�<>
+</h3创建新仓库<>
 
-������
-��ı��زֿ��� git ά��������"��"��ɡ���һ������� ����Ŀ¼��������ʵ���ļ����ڶ����� �ݴ�����Index�������������������ʱ������ĸĶ�������� HEAD����ָ�������һ���ύ�Ľ����
+工作流
+你的本地仓库由 git 维护的三棵"树"组成。第一个是你的 工作目录，它持有实际文件；第二个是 暂存区（Index），它像个缓存区域，临时保存你的改动；最后是 HEAD，它指向你最后一次提交的结果。
 
-�����������ģ����������ӵ��ݴ�������ʹ���������
+你可以提出更改（把它们添加到暂存区），使用如下命令：
 git add <filename>
 git add *
-���� git �����������̵ĵ�һ����ʹ������������ʵ���ύ�Ķ���
-git commit -m "�����ύ��Ϣ"
-���ڣ���ĸĶ��Ѿ��ύ���� HEAD�����ǻ�û�����Զ�˲ֿ⡣
+这是 git 基本工作流程的第一步；使用如下命令以实际提交改动：
+git commit -m "代码提交信息"
+现在，你的改动已经提交到了 HEAD，但是还没到你的远端仓库。
 
-���͸Ķ�
-��ĸĶ������Ѿ��ڱ��زֿ�� HEAD ���ˡ�ִ�����������Խ���Щ�Ķ��ύ��Զ�˲ֿ⣺
+推送改动
+你的改动现在已经在本地仓库的 HEAD 中了。执行如下命令以将这些改动提交到远端仓库：
 git push origin master
-���԰� master ��������Ҫ���͵��κη�֧�� 
+可以把 master 换成你想要推送的任何分支。 
 
-����㻹û�п�¡���вֿ⣬��������Ĳֿ����ӵ�ĳ��Զ�̷������������ʹ�������������ӣ�
+如果你还没有克隆现有仓库，并欲将你的仓库连接到某个远程服务器，你可以使用如下命令添加：
 git remote add origin <server>
-�������ܹ�����ĸĶ����͵������ӵķ�������ȥ�ˡ�
+如此你就能够将你的改动推送到所添加的服务器上去了。
 
-��֧
-��֧�����������Կ�����Ե�����ġ����㴴���ֿ��ʱ��master ��"Ĭ�ϵ�"��֧����������֧�Ͻ��п�������ɺ��ٽ����Ǻϲ�������֧�ϡ�
+分支
+分支是用来将特性开发绝缘开来的。在你创建仓库的时候，master 是"默认的"分支。在其他分支上进行开发，完成后再将它们合并到主分支上。
 
 branches
-����һ������"feature_x"�ķ�֧�����л���ȥ��
+创建一个叫做"feature_x"的分支，并切换过去：
 git checkout -b feature_x
-�л�������֧��
+切换回主分支：
 git checkout master
-�ٰ��½��ķ�֧ɾ����
+再把新建的分支删掉：
 git branch -d feature_x
-�����㽫��֧���͵�Զ�˲ֿ⣬��Ȼ�÷�֧���� ��Ϊ���������ģ�
+除非你将分支推送到远端仓库，不然该分支就是 不为他人所见的：
 git push origin <branch>
 
-������ϲ�
-Ҫ������ı��زֿ������¸Ķ���ִ�У�
+更新与合并
+要更新你的本地仓库至最新改动，执行：
 git pull
-������Ĺ���Ŀ¼�� ��ȡ��fetch�� �� �ϲ���merge�� Զ�˵ĸĶ���
-Ҫ�ϲ�������֧����ĵ�ǰ��֧������ master����ִ�У�
+以在你的工作目录中 获取（fetch） 并 合并（merge） 远端的改动。
+要合并其他分支到你的当前分支（例如 master），执行：
 git merge <branch>
-������������£�git ���᳢��ȥ�Զ��ϲ��Ķ����ź����ǣ�����ܲ���ÿ�ζ��ɹ��������ܳ��ֳ�ͻ��conflicts���� ��ʱ�����Ҫ���޸���Щ�ļ����ֶ��ϲ���Щ��ͻ��conflicts��������֮������Ҫִ�����������Խ����Ǳ��Ϊ�ϲ��ɹ���
+在这两种情况下，git 都会尝试去自动合并改动。遗憾的是，这可能并非每次都成功，并可能出现冲突（conflicts）。 这时候就需要你修改这些文件来手动合并这些冲突（conflicts）。改完之后，你需要执行如下命令以将它们标记为合并成功：
 git add <filename>
-�ںϲ��Ķ�֮ǰ�������ʹ����������Ԥ�����죺
+在合并改动之前，你可以使用如下命令预览差异：
 git diff <source_branch> <target_branch>
 
-��ǩ
-Ϊ��������������ǩ���Ƽ��ġ�����������Ѵ��ڣ��� SVN ��Ҳ�С������ִ�����������һ������ 1.0.0 �ı�ǩ��
+标签
+为软件发布创建标签是推荐的。这个概念早已存在，在 SVN 中也有。你可以执行如下命令创建一个叫做 1.0.0 的标签：
 git tag 1.0.0 1b2e1d63ff
-1b2e1d63ff ������Ҫ��ǵ��ύ ID ��ǰ 10 λ�ַ�������ʹ�����������ȡ�ύ ID��
+1b2e1d63ff 是你想要标记的提交 ID 的前 10 位字符。可以使用下列命令获取提交 ID：
 git log
-��Ҳ����ʹ����һ����ύ ID ǰ��λ��ֻҪ����ָ�����Ψһ�ԡ�
+你也可以使用少一点的提交 ID 前几位，只要它的指向具有唯一性。
 
-�滻���ظĶ�
-���������ʧ�󣨵�Ȼ���������Զ��Ҫ�������������ʹ�����������滻�����ظĶ���
+替换本地改动
+假如你操作失误（当然，这最好永远不要发生），你可以使用如下命令替换掉本地改动：
 git checkout -- <filename>
-�������ʹ�� HEAD �е����������滻����Ĺ���Ŀ¼�е��ļ��������ӵ��ݴ����ĸĶ��Լ����ļ��������ܵ�Ӱ�졣
+此命令会使用 HEAD 中的最新内容替换掉你的工作目录中的文件。已添加到暂存区的改动以及新文件都不会受到影响。
 
-�������붪�����ڱ��ص����иĶ����ύ�����Ե��������ϻ�ȡ���µİ汾��ʷ�������㱾������ָ֧������
+假如你想丢弃你在本地的所有改动与提交，可以到服务器上获取最新的版本历史，并将你本地主分支指向它：
 git fetch origin
 git reset --hard origin/master
 
-ʵ��С��ʿ
-�ڽ���ͼ�λ� git��
+实用小贴士
+内建的图形化 git：
 gitk
-��ɫ�� git �����
+彩色的 git 输出：
 git config color.ui true
-��ʾ��ʷ��¼ʱ��ÿ���ύ����Ϣֻ��ʾһ�У�
+显示历史记录时，每个提交的信息只显示一行：
 git config format.pretty oneline
-����ʽ�����ļ����ݴ�����
+交互式添加文件到暂存区：
 git add -i
 
-GitLab����ssh-key����������ÿ�������˺�����
-������̣�
-1.���ز���
+GitLab添加ssh-key，操作无需每次输入账号密码
+解决流程：
+1.本地操作
 
-      �򿪱���git brash������������ָ�����ssh��Կ��˽Կ��
+      打开本地git brash，在其中输入指令，生成ssh公钥和私钥对
 
-   ssh-keygen -t rsa -C 'xxx@xxx.com' ����xxx@xxx.com��Ϊ��������ַ
+   ssh-keygen -t rsa -C 'xxx@xxx.com' 其中xxx@xxx.com即为你的邮箱地址
 
-      ����س���������ѡ��洢·������ʱ��������ֱ�ӻس�����ᱣ�浽Ĭ��·��
-      �������˴�Ŀ¼�����и��ļ���������ʾ�Ƿ񸲸ǣ�����yes�س�����
-      �����������������룬�������룬�ٴλس�����������ٴ�ȷ���������룬�ٻس������������
-2.��cmd�и��Ƶ���Կ
-      �򿪵��Ե�cmd����������������س� type %userprofile%\.ssh\id_rsa.pub | clip
-      ��ʱ�Ѹ���
-3.GitLab�ϲ���
-      ��GitLab���棬���settings������SSH-Keys�������ƹ����Ĺ�Կ�����key���У��·�title���Լ����������addkey��
-      �������ϲ������ٴ���ȡ�������ȡ����Ӧ�����������룬��������������
-      ���� git config --global credential.helper store ����
-      Ȼ�����pull/push ���������û������룬��һ�������ȥ���´��ٲ���pull/pushʱ�Ͳ���Ҫ�����û��������ˡ�
+      点击回车，会让你选择存储路径，此时不用理会直接回车，其会保存到默认路径
+      可能有人此目录下已有该文件，他会提示是否覆盖，输入yes回车即可
+      接下来就是输入密码，不用输入，再次回车，其会让你再次确认输入密码，再回车，即生成完毕
+2.在cmd中复制到公钥
+      打开电脑的cmd，在其中输入命令并回车 type %userprofile%\.ssh\id_rsa.pub | clip
+      此时已复制
+3.GitLab上操作
+      到GitLab界面，点击settings，后点击SSH-Keys，将复制过来的公钥黏贴到key框中，下方title可自己命名，点击addkey。
+      经过如上操作，再次拉取代码和提取代码应无需再输密码，若还需输入密码
+      输入 git config --global credential.helper store 命令
+      然后操作pull/push 会让输入用户名密码，第一次输入进去。下次再操作pull/push时就不需要输入用户名密码了。
+      
+git 恢复到某个版本
+
+git log 获取历史提交的版本号
+git reset --hard e7a98b4eabc91afebd7e3f3d7c474276146c6c2f 恢复到某个版本
+回退命令：
+$ git reset --hard HEAD^         回退到上个版本
+$ git reset --hard HEAD~3        回退到前3次提交之前，以此类推，回退到n次提交之前
+$ git reset --hard commit_id     退到/进到 指定commit的sha码
+强推到远程：
+$ git push origin HEAD --force
+
+一、什么是tag
+tag是git版本库的一个标记，指向某个commit的指针。
+
+tag主要用于发布版本的管理，一个版本发布之后，我们可以为git打上 v.1.0.1 v.1.0.2 ...这样的标签。
+
+tag感觉跟branch有点相似，但是本质上和分工上是不同的：
+
+tag 对应某次commit, 是一个点，是不可移动的。
+branch 对应一系列commit，是很多点连成的一根线，有一个HEAD 指针，是可以依靠 HEAD 指针移动的。
+所以，两者的区别决定了使用方式，改动代码用 branch ,不改动只查看用 tag。
+tag 和 branch 的相互配合使用，有时候起到非常方便的效果，例如：已经发布了 v1.0 v2.0 v3.0 三个版本，这个时候，我突然想不改现有代码的前提下，在 v2.0 的基础上加个新功能，作为 v4.0 发布。就可以检出 v2.0 的代码作为一个 branch ，然后作为开发分支。
+
+二、tag的简单使用
+1.创建tag：
+创建 tag 是基于本地分支的 commit，而且与分支的推送是两回事，就是说分支已经推送到远程了，但是你的 tag 并没有，如果把 tag 推送到远程分支上，需要另外执行 tag 的推送命令。
+
+git tag <tagName> //创建本地tag
+
+git push origin <tagName> //推送到远程仓库
+
+若存在很多未推送的本地标签，你想一次全部推送的话：
+
+git push origin --tags
+
+以上是基于本地当前分支的最后的一个commit 创建的 tag ，但是如果不想以最后一个，只想以某一个特定的提交为tag ，也是可以的，只要你知道commit 的id。
+
+git log --pretty=oneline //查看当前分支的提交历史 里面包含 commit id
+
+git tag -a <tagName> <commitId>
+
+2.查看标签
+查看本地某个 tag 的详细信息：
+
+git show <tagName>
+
+查看本地所有 tag：
+
+git tag 或者 git tag -l
+
+查看远程所有 tag：
+
+git ls-remote --tags origin
+
+3.删除标签
+本地 tag 的删除：
+
+git tag -d <tagName>
+
+远程 tag 的删除：
+
+git push origin :<tagName>
+
+4.检出标签
+git checkout -b <branchName> <tagName>
+
+因为 tag 本身指向的就是一个 commit，所以和根据commit id 检出分支是一个道理。
+
+但是需要特别说明的是，如果我们想要修改 tag检出代码分支，那么虽然分支中的代码改变了，但是 tag标记的 commit还是同一个，标记的代码是不会变的，这个要格外的注意。
+
+其它
+
+命令git tag -a <tagname> -m "XXX..." 可以指定标签信息。
+
+命令git tag -a v0.1.0 -m "release 0.1.0 version" 创建附注标签。
+
+命令git checkout [tagname] 切换标签。
