@@ -8,24 +8,28 @@ import requests
 import sys, os
 import delegator # 子进程库
 
-import colorama
-
 import re
 import youtube_dl
 import pickle
 import _locale
 _locale._getdefaultlocale = (lambda *args: ['en_US', 'utf-8'])
 
+from eliot import start_action, to_file
+
+import colorama
 '''
 Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 Style: DIM, NORMAL, BRIGHT, RESET_ALL
 
 '''
+def color(s, color):
+	return color+ s + colorama.Style.RESET_ALL
+
 def gen_playlist(root_dir, today, yesterday):
     dirs = os.listdir(root_dir)
     if not dirs:
-        pint("No files found in "+ root_dir)
+        print("No files found in "+ root_dir)
         return
 
     playlist= open(root_dir+ today+ "-news.dpl", "w+", encoding='utf8')
@@ -90,7 +94,6 @@ class YBChannel:
 
     def get_videos_info(self, id):#获取作品信息
         url = 'https://www.googleapis.com/youtube/v3/videos'
-        query = ''
 
         results = requests.get(url, params={'id': id, 'maxResults': 25, 'part': 'snippet,statistics',
                                                'key': self.app_key})
@@ -100,6 +103,7 @@ class YBChannel:
             title= video['snippet']['title'][:30] #截断为30个字符
             when= video['snippet']['publishedAt'][:10] # + "-{:0>2d}".format(self.count+1)
             id= video['id']
+            link= "https://www.youtube.com/watch?v={}".format(id)
 
             file_name= self.dump_path+ re.sub(r"[\%\!\.\/\\\:\*\?\"\<\>\|]", "_", '[{}]{}'.format(when, title))+ '.mp3'
             # 把所有奇怪的字符，% ! . / \ : * ? " < > | 都替换成 _
@@ -117,9 +121,11 @@ class YBChannel:
                 }]
             }
 
+
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download(['https://www.youtube.com/watch?v={}'.format(id)])
-                self.count+=1
+                with start_action(action_type="下载视频", url=link):
+                	ydl.download([link])
+            self.count+=1
 
     def update(self, t1, t2):
         ch_names= list(self.channels.keys())
@@ -133,14 +139,15 @@ class YBChannel:
 
 if __name__ == "__main__":
     colorama.init()
+    to_file(open("ybnews.log", "w"))
 
     if len(sys.argv)> 1:
         dump_path= sys.argv[1]
         if dump_path[-1]!= '/':
             dump_path+= '/'
-        if os.path.exists(dum_path)== False:
-            print("The {} does not exists, will create...".format(dum_path))
-            os.makedirs(dum_path)
+        if os.path.exists(dump_path)== False:
+            print("The {} does not exists, will create...".format(dump_path))
+            os.makedirs(dump_path)
     else:
         dump_path= "C:/Download/News/"
 
@@ -148,7 +155,7 @@ if __name__ == "__main__":
     now= datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
     yesterday= (datetime.date.today() + datetime.timedelta(-1)).strftime('%Y-%m-%d')+ now[10:]
 
-    print("Starting update news for {} to {}...".format(now[:10], dump_path))
+    print("Starting update news for {} {} to {}{}...".format(colorama.Fore.RED+ colorama.Style.BRIGHT, now[:10], dump_path, colorama.Style.RESET_ALL))
 
     count= c.update(yesterday, now)
     if count>0:
